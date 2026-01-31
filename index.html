@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Product Lookup</title>
+  <style>
+    body {
+background: url('bear-paw-bg.jpg')
+no-repeat center center / cover fixed;
+color:white;
+font-family:Arial;
+text-align:center;
+padding:0 50px;
+}
+    #search { margin-top:100px; }
+    #input { padding:10px; font-size:16px; width:300px; }
+    button { padding:10px 20px; font-size:16px; }
+    .modal { display:none; position:fixed; top:20%; left:20%; width:60%; background:white; color:black; border-radius:10px; padding:20px; box-shadow:0 0 20px black; }
+    .close { position:absolute; top:10px; right:10px; font-size:24px; cursor:pointer; }
+  </style>
+</head>
+<body>
+  <div id="search">
+    <input id="input" type="text" placeholder="Enter serial number (0026001)">
+    <button onclick="find()">Search</button>
+  </div>
+
+  <div id="modal" class="modal">
+    <span class="close" onclick="hide()">×</span>
+    <p><b>Serial Number:</b> <span id="sn"></span></p >
+    <p><b>Information:</b> <span id="info"></span></p >
+    <p><b>Origin:</b> <span id="origin"></span></p >
+    < img id="image" src="" style="max-width:100%; height:200px;">
+  </div>
+
+ <script>
+  function find() {
+    let num = document.getElementById('input')?.value?.trim();
+    if (!num || !/^\d{7}$/.test(num)) {
+      alert('请输入7位数字序列号');
+      return;
+    }
+    let data = localStorage.getItem(num);
+    if (data) {
+      let d = JSON.parse(data);
+      const snEl = document.getElementById('sn');
+      const infoEl = document.getElementById('info');
+      const originEl = document.getElementById('origin');
+      const imageEl = document.getElementById('image');
+      const modalEl = document.getElementById('modal');
+
+      if (snEl) snEl.innerText = d.sn || '未知';
+      if (infoEl) infoEl.innerText = d.info || '无信息';
+      if (originEl) originEl.innerText = d.origin || '未知';
+      if (imageEl) imageEl.src = d.img || '';
+      if (modalEl) modalEl.style.display = 'block';
+    } else {
+      alert('没找到这个序列号');
+    }
+  }
+
+  function hide() {
+    const modal = document.getElementById('modal');
+    if (modal) modal.style.display = 'none';
+  }
+</script>
+</body>
+</html>
