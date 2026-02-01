@@ -1,68 +1,96 @@
-<!DOCTYPE html>
-<html>
+Ôªø<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Product Lookup</title>
+  <title>Ammolite Fossil Query</title>
   <style>
-    body {
-background: url('bear-paw-bg.jpg')
-no-repeat center center / cover fixed;
-color:white;
-font-family:Arial;
-text-align:center;
-padding:0 50px;
-}
-    #search { margin-top:100px; }
-    #input { padding:10px; font-size:16px; width:300px; }
-    button { padding:10px 20px; font-size:16px; }
-    .modal { display:none; position:fixed; top:20%; left:20%; width:60%; background:white; color:black; border-radius:10px; padding:20px; box-shadow:0 0 20px black; }
-    .close { position:absolute; top:10px; right:10px; font-size:24px; cursor:pointer; }
+    body { margin:0; height:100vh; background:#000; color:#fff; font-family:Arial; overflow:hidden; }
+    #bg { position:fixed; inset:0; background:url('bear-paw-bg.jpg') center/cover fixed; }
+    #sparkles { position:fixed; inset:0; pointer-events:none; z-index:2; }
+    .sparkle { position:absolute; width:6px; height:6px; border-radius:50%; background:radial-gradient(circle,#fff,transparent); box-shadow:0 0 8px #fff; opacity:0.5; animation:twinkle 6s infinite alternate ease-in-out; }
+    @keyframes twinkle { 0% {opacity:0.3; transform:scale(0.8);} 50% {opacity:0.9; transform:scale(1.3);} 100% {opacity:0.5; transform:scale(1);} }
+    #search { position:absolute; top:30px; left:50%; transform:translateX(-50%); z-index:10; }
+    #input { padding:10px; width:280px; border:2px solid gold; background:rgba(0,0,0,0.5); color:white; border-radius:20px 0 0 20px; outline:none; }
+    #btn { padding:10px 20px; background:gold; color:black; border:none; border-radius:0 20px 20px 0; cursor:pointer; }
+    #info-box { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:90%; max-width:500px; padding:25px; background:rgba(0,0,0,0.9); border:3px solid gold; border-radius:15px; display:none; z-index:20; text-align:left; box-shadow:0 0 40px gold; }
+    .close { position:absolute; top:10px; right:15px; font-size:36px; color:gold; cursor:pointer; }
   </style>
 </head>
 <body>
+  <div id="bg"></div>
+  <div id="sparkles"></div>
   <div id="search">
-    <input id="input" type="text" placeholder="Enter serial number (0026001)">
-    <button onclick="find()">Search</button>
+    <input id="input" placeholder="Enter serial like 0026001">
+    <button id="btn">Search</button>
   </div>
 
-  <div id="modal" class="modal">
-    <span class="close" onclick="hide()">°¡</span>
-    <p><b>Serial Number:</b> <span id="sn"></span></p >
-    <p><b>Information:</b> <span id="info"></span></p >
-    <p><b>Origin:</b> <span id="origin"></span></p >
-    < img id="image" src="" style="max-width:100%; height:200px;">
+  <div id="info-box">
+    <span class="close">&times;</span>
+    <h2>Product Info</h2>
+    <p><b>Name:</b> <span id="name"></span></p >
+    <p><b>Location:</b> <span id="loc"></span></p >
+    <p><b>Age:</b> <span id="age"></span></p >
+    <p><b>Size:</b> <span id="size"></span></p >
+    <p><b>Other:</b> <span id="other"></span></p >
+    < img id="img" src="" alt="Image" style="max-width:100%; margin-top:15px; border-radius:10px;">
   </div>
 
- <script>
-  function find() {
-    let num = document.getElementById('input')?.value?.trim();
-    if (!num || !/^\d{7}$/.test(num)) {
-      alert('«Î ‰»Î7Œª ˝◊÷–Ú¡–∫≈');
-      return;
+  <script>
+    // ÁîüÊàêÊòüÊòü
+    for(let i = 0; i < 200; i++) {
+      const s = document.createElement('div');
+      s.className = 'sparkle';
+      s.style.left = Math.random() * 90 + 5 + '%';
+      s.style.top = Math.random() * 90 + 5 + '%';
+      s.style.animationDelay = Math.random() * 4 + 's';
+      document.getElementById('sparkles').appendChild(s);
     }
-    let data = localStorage.getItem(num);
-    if (data) {
-      let d = JSON.parse(data);
-      const snEl = document.getElementById('sn');
-      const infoEl = document.getElementById('info');
-      const originEl = document.getElementById('origin');
-      const imageEl = document.getElementById('image');
-      const modalEl = document.getElementById('modal');
 
-      if (snEl) snEl.innerText = d.sn || 'Œ¥÷™';
-      if (infoEl) infoEl.innerText = d.info || 'Œﬁ–≈œ¢';
-      if (originEl) originEl.innerText = d.origin || 'Œ¥÷™';
-      if (imageEl) imageEl.src = d.img || '';
-      if (modalEl) modalEl.style.display = 'block';
-    } else {
-      alert('√ª’“µΩ’‚∏ˆ–Ú¡–∫≈');
+    // ÂÆùÁü≥ÂºπÂá∫ + ÂºπÁ™ó
+    function popGem(data) {
+      const gems = document.querySelectorAll('.sparkle');
+      const gem = gems[Math.floor(Math.random() * gems.length)]; // ÈöèÊú∫ÈÄâ‰∏ÄÈ¢ó
+      gem.style.transition = 'all 0.4s';
+      gem.style.opacity = '1';
+      gem.style.transform = 'scale(2.5)';
+      gem.style.boxShadow = '0 0 30px white';
+
+      document.getElementById('info-box').style.display = 'block';
+
+      setTimeout(() => {
+        document.getElementById('name').textContent = data.name || 'Unknown';
+        document.getElementById('loc').textContent = data.location || 'Unknown';
+        document.getElementById('age').textContent = data.age || 'Unknown';
+        document.getElementById('size').textContent = data.size || 'Unknown';
+        document.getElementById('other').textContent = data.other || 'None';
+        document.getElementById('img').src = data.img || '';
+      }, 100);
+
+      setTimeout(() => {
+        gem.style.opacity = '0.5';
+        gem.style.transform = 'scale(1)';
+        gem.style.boxShadow = '0 0 8px #fff';
+      }, 800);
     }
-  }
 
-  function hide() {
-    const modal = document.getElementById('modal');
-    if (modal) modal.style.display = 'none';
-  }
-</script>
+    document.querySelector('.close').onclick = () => {
+      document.getElementById('info-box').style.display = 'none';
+    };
+
+    document.getElementById('btn').onclick = () => {
+      const seq = document.getElementById('input').value.trim();
+      if (!seq) return alert('Input your products number');
+      const stored = localStorage.getItem(seq);
+      if (stored) {
+        popGem(JSON.parse(stored));
+      } else {
+        alert('Not found');
+      }
+    };
+
+    document.getElementById('input').addEventListener('keypress', e => {
+      if (e.key === 'Enter') document.getElementById('btn').click();
+    });
+  </script>
 </body>
 </html>
